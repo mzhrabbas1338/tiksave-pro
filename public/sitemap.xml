@@ -7,16 +7,16 @@
   </url>
 
   <url>
-    <loc>https://tiksave-pro.vercel.app/#/faq</loc>
+    <loc>https://tiksave-pro.vercel.app/faq</loc>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://tiksave-pro.vercel.app/#/blog</loc>
+    <loc>https://tiksave-pro.vercel.app/blog</loc>
     <priority>0.8</priority>
   </url>
    <url>
-    <loc>https://tiksave-pro.vercel.app/#/install</loc>
+    <loc>https://tiksave-pro.vercel.app/install</loc>
     <priority>0.8</priority>
   </url>
 
