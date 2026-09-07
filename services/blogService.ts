@@ -1,6 +1,6 @@
 import { BlogPost } from '../types';
 
-const BLOG_POSTS: BlogPost[] = [
+const INITIAL_BLOG_POSTS: BlogPost[] = [
   {
     id: '1',
     slug: 'how-to-download-tiktok-videos-without-watermark-2025',
@@ -118,15 +118,74 @@ const BLOG_POSTS: BlogPost[] = [
   }
 ];
 
+export const getAllStoredPosts = (): BlogPost[] => {
+  const customPostsStr = localStorage.getItem('custom_blog_posts');
+  let customPosts: BlogPost[] = [];
+  if (customPostsStr) {
+    try {
+      customPosts = JSON.parse(customPostsStr);
+    } catch (e) {
+      console.error('Failed to parse custom blog posts', e);
+    }
+  }
+
+  // Merge custom posts ahead of default posts, avoiding ID collisions
+  const customIds = new Set(customPosts.map(p => p.id));
+  const filteredInitial = INITIAL_BLOG_POSTS.filter(p => !customIds.has(p.id));
+  return [...customPosts, ...filteredInitial];
+};
+
+import { getMasterGlobalStore, saveMasterGlobalStore } from './cloudSyncService';
+
+export const saveBlogPost = (post: BlogPost): void => {
+  const currentCustom = localStorage.getItem('custom_blog_posts');
+  let posts: BlogPost[] = [];
+  if (currentCustom) {
+    try {
+      posts = JSON.parse(currentCustom);
+    } catch (e) {}
+  }
+
+  const existingIdx = posts.findIndex(p => p.id === post.id);
+  if (existingIdx >= 0) {
+    posts[existingIdx] = post;
+  } else {
+    posts.unshift(post);
+  }
+
+  localStorage.setItem('custom_blog_posts', JSON.stringify(posts));
+
+  const store = getMasterGlobalStore();
+  store.blogPosts = getAllStoredPosts();
+  saveMasterGlobalStore(store);
+};
+
+export const deleteBlogPost = (id: string): void => {
+  const currentCustom = localStorage.getItem('custom_blog_posts');
+  let posts: BlogPost[] = [];
+  if (currentCustom) {
+    try {
+      posts = JSON.parse(currentCustom);
+    } catch (e) {}
+  }
+
+  const filtered = posts.filter(p => p.id !== id);
+  localStorage.setItem('custom_blog_posts', JSON.stringify(filtered));
+
+  const store = getMasterGlobalStore();
+  store.blogPosts = getAllStoredPosts();
+  saveMasterGlobalStore(store);
+};
+
 export const getBlogPosts = async (): Promise<BlogPost[]> => {
-  // Simulate API delay
   return new Promise((resolve) => {
-    setTimeout(() => resolve(BLOG_POSTS), 500);
+    setTimeout(() => resolve(getAllStoredPosts()), 200);
   });
 };
 
 export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | undefined> => {
   return new Promise((resolve) => {
-    setTimeout(() => resolve(BLOG_POSTS.find(post => post.slug === slug)), 500);
+    const allPosts = getAllStoredPosts();
+    setTimeout(() => resolve(allPosts.find(post => post.slug === slug)), 200);
   });
 };

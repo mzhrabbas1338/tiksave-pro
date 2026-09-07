@@ -15,9 +15,5 @@
     <loc>https://tiksave-pro.vercel.app/blog</loc>
     <priority>0.8</priority>
   </url>
-   <url>
-    <loc>https://tiksave-pro.vercel.app/install</loc>
-    <priority>0.8</priority>
-  </url>
 
 </urlset>
