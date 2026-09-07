@@ -235,11 +235,23 @@ const AdminPanel: React.FC = () => {
     });
   };
 
-  const handleSaveSeo = (e: React.FormEvent) => {
+  const handleSaveSeo = async (e: React.FormEvent) => {
     e.preventDefault();
     saveSeoSettings(seoForm);
     setSeoSavedNotice(true);
-    setTimeout(() => setSeoSavedNotice(false), 3000);
+
+    const commitMsg = prompt(
+      'Enter Git commit message for SEO updates (or click OK to push to main):',
+      customCommitMessage || 'cms: update SEO settings & page copy'
+    );
+
+    if (commitMsg !== null) {
+      const msgToUse = commitMsg.trim() || 'cms: update SEO settings & page copy';
+      setCustomCommitMessage(msgToUse);
+      await handleManualGitCommit(msgToUse);
+    } else {
+      setTimeout(() => setSeoSavedNotice(false), 3000);
+    }
   };
 
   const handleSaveFaqItem = (e: React.FormEvent) => {
@@ -711,11 +723,29 @@ const AdminPanel: React.FC = () => {
               <h2 className="text-2xl font-bold dark:text-white text-slate-900 mt-1">100% SEO & Content Control Studio</h2>
               <p className="text-sm dark:text-gray-400 text-slate-600">Customize document titles, meta tags, site headings (H1, H2), hero sub-headings, FAQs, and Schemas.</p>
             </div>
-            {seoSavedNotice && (
-              <span className="px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30 animate-pulse flex-shrink-0">
-                ✅ All Changes Applied Live!
-              </span>
-            )}
+            <div className="flex flex-wrap items-center gap-3">
+              {seoSavedNotice && (
+                <span className="px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30 animate-pulse flex-shrink-0">
+                  ✅ All Changes Applied Live!
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  saveSeoSettings(seoForm);
+                  const msg = prompt('Enter Git commit message for SEO update:', customCommitMessage || 'cms: update SEO settings & page copy');
+                  if (msg !== null) {
+                    const msgToUse = msg.trim() || 'cms: update SEO settings & page copy';
+                    setCustomCommitMessage(msgToUse);
+                    handleManualGitCommit(msgToUse);
+                  }
+                }}
+                disabled={isCommittingGit}
+                className="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold rounded-xl text-xs hover:opacity-90 shadow-md transition-all flex items-center gap-1.5 flex-shrink-0"
+              >
+                <span>{isCommittingGit ? '⏳ Committing...' : '🚀 Commit SEO to Git Main'}</span>
+              </button>
+            </div>
           </div>
 
           {/* Sub-Navigation for SEO Studio */}
@@ -1490,15 +1520,16 @@ const AdminPanel: React.FC = () => {
             )}
 
             {/* Save Buttons Bar */}
-            <div className="pt-4 border-t dark:border-white/10 border-slate-200 flex items-center justify-between">
+            <div className="pt-4 border-t dark:border-white/10 border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
               <span className="text-xs dark:text-gray-400 text-slate-500">
-                ⚡ Changes apply instantly to public pages & document head.
+                ⚡ Changes apply live and will prompt for a Git commit message to deploy via Vercel.
               </span>
               <button
                 type="submit"
-                className="px-8 py-3.5 bg-gradient-to-r from-brand-cyan to-brand-pink text-white font-extrabold rounded-xl shadow-lg hover:opacity-90 transition-all"
+                disabled={isCommittingGit}
+                className="px-8 py-3.5 bg-gradient-to-r from-brand-cyan to-brand-pink text-white font-extrabold rounded-xl shadow-lg hover:opacity-90 transition-all text-sm flex items-center gap-2"
               >
-                Save & Apply Live SEO & Headings Settings
+                <span>{isCommittingGit ? '⏳ Committing...' : 'Save & Commit SEO to Git Main 🚀'}</span>
               </button>
             </div>
           </form>
