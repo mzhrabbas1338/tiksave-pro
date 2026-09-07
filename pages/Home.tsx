@@ -436,28 +436,34 @@ const Home: React.FC = () => {
 };
 
 const StatItem = ({ number, label }: { number: string; label: string }) => (
-  <div className="flex flex-col items-center">
-    <span className="text-2xl sm:text-5xl font-black bg-clip-text text-transparent bg-gradient-to-b dark:from-white dark:to-gray-400 from-slate-900 to-slate-600 mb-1">{number}</span>
-    <span className="dark:text-gray-400 text-slate-600 uppercase tracking-wider text-[11px] sm:text-sm font-semibold">{label}</span>
+  <div className="flex flex-col items-center justify-center p-4 rounded-2xl glass-card border dark:border-white/10 border-slate-200/90 shadow-sm">
+    <span className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-pink mb-1">{number}</span>
+    <span className="dark:text-gray-300 text-slate-700 uppercase tracking-wider text-[11px] sm:text-sm font-extrabold">{label}</span>
   </div>
 );
 
 const FeatureCard = ({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) => (
-  <div className="glass-card dark:bg-brand-surface bg-white p-6 sm:p-8 rounded-3xl transition-all duration-300 dark:border-white/10 border-slate-200/90 shadow-md hover:shadow-xl group">
-    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl dark:bg-white/10 bg-slate-100 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
-      {icon}
+  <div className="glass-card p-6 sm:p-8 rounded-3xl transition-all duration-300 dark:border-white/10 border-slate-200/90 shadow-md hover:shadow-xl group flex flex-col justify-between">
+    <div>
+      <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl dark:bg-white/10 bg-slate-100 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+        {icon}
+      </div>
+      <h3 className="text-lg sm:text-xl font-bold dark:text-white text-slate-900 mb-2 sm:mb-3">{title}</h3>
+      <p className="dark:text-gray-300 text-slate-600 leading-relaxed text-sm sm:text-base">{desc}</p>
     </div>
-    <h3 className="text-lg sm:text-xl font-bold dark:text-white text-slate-900 mb-2 sm:mb-3">{title}</h3>
-    <p className="dark:text-gray-300 text-slate-600 leading-relaxed text-sm sm:text-base">{desc}</p>
   </div>
 );
 
 const StepCard = ({ number, title, desc }: { number: string; title: string; desc: string }) => (
-  <div className="relative pl-6 sm:pl-0">
-    <div className="md:hidden absolute left-0 top-0 bottom-0 w-0.5 dark:bg-gray-800 bg-slate-300"></div>
-    <span className="text-4xl sm:text-6xl font-black dark:text-gray-800 text-slate-300 absolute -top-5 -left-3 md:relative md:top-0 md:left-0 md:block md:mb-3">{number}</span>
-    <h3 className="text-lg sm:text-xl font-bold dark:text-white text-slate-900 mb-2 relative z-10">{title}</h3>
-    <p className="dark:text-gray-300 text-slate-600 relative z-10 text-sm sm:text-base leading-relaxed">{desc}</p>
+  <div className="glass-card p-6 sm:p-8 rounded-3xl border dark:border-white/10 border-slate-200/90 shadow-md hover:shadow-xl transition-all duration-300 group">
+    <div className="flex items-center justify-between mb-4 sm:mb-6">
+      <span className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-pink">{number}</span>
+      <span className="px-3 py-1 rounded-full dark:bg-white/10 bg-slate-100 dark:text-gray-300 text-slate-700 font-bold text-xs">
+        Step {number}
+      </span>
+    </div>
+    <h3 className="text-lg sm:text-xl font-bold dark:text-white text-slate-900 mb-2 sm:mb-3">{title}</h3>
+    <p className="dark:text-gray-300 text-slate-600 leading-relaxed text-sm sm:text-base">{desc}</p>
   </div>
 );
 
