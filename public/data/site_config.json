@@ -50,7 +50,11 @@
     "blogH1Line1": "Latest News &",
     "blogH1Gradient": "Insights",
     "blogSubtitle": "Discover tips, trends, and guides to master TikTok and social media growth.",
-    "ga4MeasurementId": "G-TIKSAVEPRO2025"
+    "ga4MeasurementId": "G-TIKSAVEPRO2025",
+    "customHeadScript": "",
+    "customBodyScript": "",
+    "robotsTxtContent": "User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: https://tiksave-pro.vercel.app/sitemap.xml",
+    "customSchemaOverride": ""
   },
   "adSettings": {
     "globalAdsEnabled": true,
@@ -75,20 +79,20 @@
   "blogPosts": [
     {
       "id": "1",
-      "slug": "how-to-download-tiktok-videos-without-watermark-2025",
-      "title": "How to Download TikTok Videos Without Watermark in 2025",
+      "slug": "how-to-download-tiktok-videos-without-watermark-2028",
+      "title": "How to Download TikTok Videos Without Watermark in 2028",
       "excerpt": "The ultimate guide to saving your favorite TikTok content in high quality without the annoying logo overlay.",
+      "category": "Tutorials",
       "coverImage": "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
       "author": {
-        "name": "Alex Rivera",
+        "name": "Alex Riveraa",
         "avatar": "https://randomuser.me/api/portraits/men/32.jpg",
         "role": "Content Creator"
       },
-      "category": "Tutorials",
       "date": "Oct 12, 2025",
       "readTime": "5 min read",
       "content": "<p class=\"lead\">TikTok has become the go-to platform for viral content, but sharing those videos on other platforms like Instagram Reels or YouTube Shorts is often hindered by the bouncing watermark. Here is how you can remove it safely and easily.</p><h2>Why Remove the Watermark?</h2><p>If you are a content creator, repurposing your content is key to growth. Algorithms on platforms like Instagram explicitly state that they deprioritize content with visible watermarks from other apps. By using a tool like <strong>TikSave Pro</strong>, you ensure your content looks native to every platform you post on.</p><h2>Step-by-Step Guide</h2><ul><li><strong>Step 1:</strong> Open the TikTok app and find the video you want to save.</li><li><strong>Step 2:</strong> Tap the \"Share\" button (the arrow icon).</li><li><strong>Step 3:</strong> Select \"Copy Link\" from the row of icons.</li><li><strong>Step 4:</strong> Paste the link into TikSave Pro and hit Download.</li></ul>"
     }
   ],
-  "lastUpdated": 1725700000000
+  "lastUpdated": 1788777521550
 }
