@@ -42,7 +42,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className={`min-h-screen flex flex-col font-sans antialiased selection:bg-brand-pink selection:text-white transition-colors duration-300 ${
-      theme === 'dark' ? 'bg-brand-darker text-white' : 'bg-slate-50 text-slate-900'
+      theme === 'dark' ? 'bg-brand-darker text-white' : 'bg-white text-slate-900'
     }`}>
       <Navbar />
       <main className="flex-grow">

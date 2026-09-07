@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="google-site-verification" content="Ga26AjUtYkubAJiTKzxuXYnRh2tPb2D8JJwBE9GgXIk" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050505" id="meta-theme-color" />
     <title>TikSave Pro - Download TikTok Videos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,6 +16,11 @@
           var saved = localStorage.getItem('theme');
           var theme = (saved === 'light' || saved === 'dark') ? saved : 'dark';
           document.documentElement.classList.add(theme);
+          if (theme === 'light') {
+            document.documentElement.style.backgroundColor = '#ffffff';
+          } else {
+            document.documentElement.style.backgroundColor = '#050505';
+          }
         } catch (e) {}
       })();
     </script>
@@ -33,7 +39,7 @@
                 dark: '#0f0f0f',
                 darker: '#050505',
                 surface: '#1a1a1a',
-                lightBg: '#f8fafc',
+                lightBg: '#ffffff',
                 lightSurface: '#ffffff',
               }
             },
@@ -74,13 +80,15 @@
         scroll-behavior: smooth;
         -webkit-tap-highlight-color: transparent;
       }
-      html.dark body {
-        background-color: #050505;
+      html.dark, html.dark body {
+        background-color: #050505 !important;
         color: #f8fafc;
+        color-scheme: dark;
       }
-      html.light body {
-        background-color: #f8fafc;
+      html.light, html.light body {
+        background-color: #ffffff !important;
         color: #0f172a;
+        color-scheme: light;
       }
       .dark .glass-nav {
         background: rgba(5, 5, 5, 0.8);

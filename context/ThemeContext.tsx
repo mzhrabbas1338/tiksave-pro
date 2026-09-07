@@ -19,12 +19,24 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     localStorage.setItem('theme', theme);
     const root = document.documentElement;
+    const metaTheme = document.getElementById('meta-theme-color');
+
     if (theme === 'dark') {
       root.classList.add('dark');
       root.classList.remove('light');
+      document.body.classList.add('dark');
+      document.body.classList.remove('light');
+      document.body.style.backgroundColor = '#050505';
+      document.body.style.color = '#ffffff';
+      if (metaTheme) metaTheme.setAttribute('content', '#050505');
     } else {
       root.classList.add('light');
       root.classList.remove('dark');
+      document.body.classList.add('light');
+      document.body.classList.remove('dark');
+      document.body.style.backgroundColor = '#ffffff';
+      document.body.style.color = '#0f172a';
+      if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
     }
   }, [theme]);
 
