@@ -28,6 +28,13 @@ const BlogList: React.FC = () => {
       setLoading(false);
     };
     fetchPosts();
+
+    window.addEventListener('blog_posts_updated', fetchPosts);
+    window.addEventListener('tiksave_global_store_updated', fetchPosts);
+    return () => {
+      window.removeEventListener('blog_posts_updated', fetchPosts);
+      window.removeEventListener('tiksave_global_store_updated', fetchPosts);
+    };
   }, []);
 
   return (

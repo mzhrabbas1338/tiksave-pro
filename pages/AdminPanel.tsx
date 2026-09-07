@@ -1804,9 +1804,9 @@ const AdminPanel: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  value={githubForm.filePath || 'data/site_config.json'}
+                  value={githubForm.filePath || 'public/data/site_config.json'}
                   onChange={(e) => setGithubForm({ ...githubForm, filePath: e.target.value })}
-                  placeholder="data/site_config.json"
+                  placeholder="public/data/site_config.json"
                   className="w-full dark:bg-black/50 bg-slate-100 border dark:border-white/15 border-slate-300 rounded-xl px-4 py-3 dark:text-white text-slate-900 font-mono text-sm focus:outline-none focus:border-brand-cyan"
                 />
               </div>

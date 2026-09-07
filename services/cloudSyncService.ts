@@ -3,7 +3,7 @@ import { AdSettings, DEFAULT_AD_SETTINGS, getAdSettings, saveAdSettings } from '
 import { BlogPost } from '../types';
 import { getAllStoredPosts, saveBlogPost } from './blogService';
 import { getFirebaseConfig } from './firebaseService';
-import { commitToGitHubRepository } from './githubGitService';
+import { commitToGitHubRepository, getGitHubConfig } from './githubGitService';
 
 export interface WordPressGlobalStore {
   seoSettings: SeoSettings;
@@ -87,34 +87,69 @@ export const saveMasterGlobalStore = async (updatedStore: WordPressGlobalStore):
 };
 
 export const syncGlobalStoreFromCloud = async (): Promise<void> => {
-  const config = getFirebaseConfig();
-  if (!config.databaseURL) return;
-
-  try {
-    const cleanUrl = config.databaseURL.trim().replace(/\/$/, '');
-    const targetUrl = cleanUrl.endsWith('.json') ? cleanUrl : `${cleanUrl}/global_store.json`;
-    const res = await fetch(targetUrl);
-    if (res.ok) {
-      const remoteStore: WordPressGlobalStore = await res.json();
-      if (remoteStore && remoteStore.seoSettings) {
-        const localStore = getMasterGlobalStore();
-        if (!localStore.lastUpdated || (remoteStore.lastUpdated && remoteStore.lastUpdated > localStore.lastUpdated)) {
-          localStorage.setItem(GLOBAL_STORE_KEY, JSON.stringify(remoteStore));
-          localStorage.setItem('seo_settings', JSON.stringify(remoteStore.seoSettings));
-          localStorage.setItem('ad_settings', JSON.stringify(remoteStore.adSettings));
+  const applyRemoteStore = (remoteStore: WordPressGlobalStore): boolean => {
+    if (remoteStore && remoteStore.seoSettings) {
+      const localStore = getMasterGlobalStore();
+      if (!localStore.lastUpdated || (remoteStore.lastUpdated && remoteStore.lastUpdated > localStore.lastUpdated)) {
+        localStorage.setItem(GLOBAL_STORE_KEY, JSON.stringify(remoteStore));
+        localStorage.setItem('seo_settings', JSON.stringify(remoteStore.seoSettings));
+        localStorage.setItem('ad_settings', JSON.stringify(remoteStore.adSettings));
+        if (remoteStore.blogPosts && Array.isArray(remoteStore.blogPosts)) {
           localStorage.setItem('tiksave_blog_posts', JSON.stringify(remoteStore.blogPosts));
-
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new Event('tiksave_global_store_updated'));
-            window.dispatchEvent(new Event('seo_settings_updated'));
-            window.dispatchEvent(new Event('ad_settings_updated'));
-            window.dispatchEvent(new Event('blog_posts_updated'));
-          }
-          console.log('⚡ Synced latest WordPress master store from Cloud DB!');
+          localStorage.setItem('custom_blog_posts', JSON.stringify(remoteStore.blogPosts));
         }
+
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('tiksave_global_store_updated'));
+          window.dispatchEvent(new Event('seo_settings_updated'));
+          window.dispatchEvent(new Event('ad_settings_updated'));
+          window.dispatchEvent(new Event('blog_posts_updated'));
+        }
+        console.log('⚡ Synced latest WordPress master store from remote source!');
+        return true;
       }
     }
-  } catch (e) {
-    console.warn('Failed to fetch global store from Cloud DB', e);
+    return false;
+  };
+
+  // 1. Fetch from deployed local static JSON endpoint /data/site_config.json
+  try {
+    const localRes = await fetch(`/data/site_config.json?_t=${Date.now()}`);
+    if (localRes.ok) {
+      const localData: WordPressGlobalStore = await localRes.json();
+      applyRemoteStore(localData);
+    }
+  } catch (e) {}
+
+  // 2. Fetch from GitHub Raw CDN URL if configured
+  try {
+    const ghConfig = getGitHubConfig();
+    if (ghConfig.owner && ghConfig.repo) {
+      const owner = ghConfig.owner.trim();
+      const repo = ghConfig.repo.trim();
+      const branch = (ghConfig.branch || 'main').trim();
+      const filePath = (ghConfig.filePath || 'data/site_config.json').trim();
+      const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}?_t=${Date.now()}`;
+      
+      const ghRes = await fetch(rawUrl, { cache: 'no-store' });
+      if (ghRes.ok) {
+        const ghStore: WordPressGlobalStore = await ghRes.json();
+        applyRemoteStore(ghStore);
+      }
+    }
+  } catch (e) {}
+
+  // 3. Fetch from Firebase Realtime Database if configured
+  const firebaseConfig = getFirebaseConfig();
+  if (firebaseConfig.databaseURL) {
+    try {
+      const cleanUrl = firebaseConfig.databaseURL.trim().replace(/\/$/, '');
+      const targetUrl = cleanUrl.endsWith('.json') ? cleanUrl : `${cleanUrl}/global_store.json`;
+      const fbRes = await fetch(targetUrl);
+      if (fbRes.ok) {
+        const fbStore: WordPressGlobalStore = await fbRes.json();
+        applyRemoteStore(fbStore);
+      }
+    } catch (e) {}
   }
 };

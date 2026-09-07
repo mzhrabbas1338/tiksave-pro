@@ -13,7 +13,7 @@ export const DEFAULT_GITHUB_CONFIG: GitHubConfig = {
   repo: '',
   branch: 'main',
   personalAccessToken: '',
-  filePath: 'data/site_config.json'
+  filePath: 'public/data/site_config.json'
 };
 
 const GITHUB_CONFIG_KEY = 'tiksave_github_config';
