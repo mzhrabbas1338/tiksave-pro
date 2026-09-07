@@ -9,6 +9,7 @@ export interface WordPressGlobalStore {
   seoSettings: SeoSettings;
   adSettings: AdSettings;
   blogPosts: BlogPost[];
+  adminPasscode?: string;
   lastUpdated: number;
 }
 
@@ -31,6 +32,7 @@ export const getMasterGlobalStore = (): WordPressGlobalStore => {
     seoSettings: getSeoSettings(),
     adSettings: getAdSettings(),
     blogPosts: getAllStoredPosts(),
+    adminPasscode: localStorage.getItem('admin_master_key') || 'TikSave2025#AdminKey',
     lastUpdated: Date.now()
   };
 
@@ -53,6 +55,9 @@ export const saveMasterGlobalStore = async (updatedStore: WordPressGlobalStore):
     localStorage.setItem('seo_settings', JSON.stringify(storeToSave.seoSettings));
     localStorage.setItem('ad_settings', JSON.stringify(storeToSave.adSettings));
     localStorage.setItem('tiksave_blog_posts', JSON.stringify(storeToSave.blogPosts));
+    if (storeToSave.adminPasscode) {
+      localStorage.setItem('admin_master_key', storeToSave.adminPasscode);
+    }
   } catch (e) {
     console.error('Failed to save store locally', e);
   }
@@ -97,6 +102,9 @@ export const syncGlobalStoreFromCloud = async (): Promise<void> => {
         if (remoteStore.blogPosts && Array.isArray(remoteStore.blogPosts)) {
           localStorage.setItem('tiksave_blog_posts', JSON.stringify(remoteStore.blogPosts));
           localStorage.setItem('custom_blog_posts', JSON.stringify(remoteStore.blogPosts));
+        }
+        if (remoteStore.adminPasscode) {
+          localStorage.setItem('admin_master_key', remoteStore.adminPasscode);
         }
 
         if (typeof window !== 'undefined') {

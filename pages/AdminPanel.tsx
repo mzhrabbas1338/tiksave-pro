@@ -11,8 +11,10 @@ import { getGitHubConfig, saveGitHubConfig, testGitHubConnection, commitToGitHub
 const DEFAULT_MASTER_KEY = 'TikSave2025#AdminKey';
 
 const AdminPanel: React.FC = () => {
-  // Auth state - Firewall disabled for direct admin access
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  // Auth state - Secured access gate checking session & master key
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return sessionStorage.getItem('admin_authenticated') === 'true';
+  });
   const [passcode, setPasscode] = useState('');
   const [authError, setAuthError] = useState('');
   const [activeTab, setActiveTab] = useState<'overview' | 'cms' | 'seo' | 'monetization' | 'gsc' | 'github' | 'schema' | 'audit' | 'security'>('overview');
@@ -154,7 +156,8 @@ const AdminPanel: React.FC = () => {
   };
 
   const getMasterKey = () => {
-    return localStorage.getItem('admin_master_key') || DEFAULT_MASTER_KEY;
+    const store = getMasterGlobalStore();
+    return store.adminPasscode || localStorage.getItem('admin_master_key') || DEFAULT_MASTER_KEY;
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -302,7 +305,7 @@ const AdminPanel: React.FC = () => {
     }
   };
 
-  const handleUpdateMasterKey = (e: React.FormEvent) => {
+  const handleUpdateMasterKey = async (e: React.FormEvent) => {
     e.preventDefault();
     const correctKey = getMasterKey();
     if (currentKeyInput !== correctKey) {
@@ -319,7 +322,23 @@ const AdminPanel: React.FC = () => {
     }
 
     localStorage.setItem('admin_master_key', newKeyInput);
-    setSecurityNotice('✅ Master Security Passcode updated successfully!');
+    const masterStore = getMasterGlobalStore();
+    masterStore.adminPasscode = newKeyInput;
+    await saveMasterGlobalStore(masterStore);
+
+    setSecurityNotice('✅ Master Security Passcode updated locally & in site_config.json!');
+
+    const commitMsg = prompt(
+      'Enter Git commit message to commit updated Passcode to codebase (or click OK to push to main):',
+      customCommitMessage || 'security: update admin master passcode in site_config.json'
+    );
+
+    if (commitMsg !== null) {
+      const msgToUse = commitMsg.trim() || 'security: update admin master passcode in site_config.json';
+      setCustomCommitMessage(msgToUse);
+      await handleManualGitCommit(msgToUse);
+    }
+
     setCurrentKeyInput('');
     setNewKeyInput('');
     setConfirmKeyInput('');
@@ -331,6 +350,59 @@ const AdminPanel: React.FC = () => {
       setAnalytics(getRealAnalyticsSummary());
     }
   };
+
+  // Locked Admin Access Gate UI
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen pt-28 pb-20 px-4 flex items-center justify-center">
+        <div className="w-full max-w-md dark:bg-brand-surface bg-white border dark:border-white/10 border-slate-200 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-pink/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-brand-cyan/10 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-pink to-brand-cyan flex items-center justify-center text-white text-3xl mx-auto shadow-lg mb-4">
+              🔐
+            </div>
+            <h1 className="text-2xl font-extrabold dark:text-white text-slate-900">Admin Access Gate</h1>
+            <p className="text-xs dark:text-gray-400 text-slate-600 mt-1">Enter Master Security Passcode to unlock control center</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider dark:text-gray-300 text-slate-700 mb-1.5">Master Security Passcode</label>
+              <input
+                type="password"
+                value={passcode}
+                onChange={(e) => setPasscode(e.target.value)}
+                placeholder="Enter admin passcode..."
+                className="w-full dark:bg-black/50 bg-slate-100 border dark:border-white/15 border-slate-300 rounded-xl px-4 py-3 dark:text-white text-slate-900 font-mono text-sm focus:outline-none focus:border-brand-pink shadow-inner"
+                autoFocus
+                required
+              />
+            </div>
+
+            {authError && (
+              <div className="text-xs font-bold p-3 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-400 text-center">
+                {authError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-gradient-to-r from-brand-cyan to-brand-pink text-white font-extrabold rounded-xl shadow-lg hover:opacity-90 transition-all text-sm cursor-pointer"
+            >
+              Unlock Control Center 🚀
+            </button>
+          </form>
+
+          <div className="mt-6 pt-4 border-t dark:border-white/10 border-slate-200 flex items-center justify-between text-[11px] dark:text-gray-400 text-slate-500">
+            <span>TikSave Pro v2.5 Security</span>
+            <span className="font-mono text-emerald-400 font-semibold">● Codebase Synced</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Unlocked Admin Portal UI
   return (
@@ -355,10 +427,12 @@ const AdminPanel: React.FC = () => {
             <span>🌐 WordPress Global Store</span>
             <span className="text-[10px] text-purple-300 font-normal">· Live & Syncing</span>
           </span>
-          <span className="px-3.5 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 font-bold text-xs border border-emerald-500/30 flex items-center gap-1.5 shadow-sm">
-            <span>🔓 Firewall Removed</span>
-            <span className="text-[10px] text-emerald-300 font-normal">· Direct Access Active</span>
-          </span>
+          <button
+            onClick={handleLogout}
+            className="px-3.5 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-bold text-xs border border-rose-500/30 flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+          >
+            <span>🔒 Lock Panel</span>
+          </button>
           <a
             href="/"
             target="_blank"
