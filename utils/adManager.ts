@@ -12,7 +12,9 @@ export interface AdSettings {
   customHeaderScript: string;
 }
 
-export const DEFAULT_AD_SETTINGS: AdSettings = {
+import initialSiteConfig from '../public/data/site_config.json';
+
+export const DEFAULT_AD_SETTINGS: AdSettings = (initialSiteConfig.adSettings as AdSettings) || {
   globalAdsEnabled: true,
   topBanner: {
     enabled: true,

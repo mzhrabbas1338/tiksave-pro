@@ -75,144 +75,71 @@ export interface SeoSettings {
   customSchemaOverride?: string;
 }
 
+import initialSiteConfig from '../public/data/site_config.json';
+
 export const DEFAULT_SEO_SETTINGS: SeoSettings = {
-  siteTitle: 'TikSave Pro - Download TikTok Videos Without Watermark Free (1080p HD)',
-  metaDescription: 'Download TikTok videos in HD 1080p, MP3 Audio, or Photo Slideshows without watermark for free. Unlimited fast downloads on iPhone, Android, PC, and Mac.',
-  keywords: 'tiktok downloader, download tiktok without watermark, tiktok mp3 downloader, ssstik, snaptik, tiktok video saver, tiktok no watermark 1080p',
-  ogImage: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=1200&q=80',
-  googleSiteVerification: 'Ga26AjUtYkubAJiTKzxuXYnRh2tPb2D8JJwBE9GgXIk',
-  canonicalUrl: 'https://tiksave-pro.vercel.app',
-  author: 'TikSave Pro Team',
-  robotsMeta: 'index, follow',
+  siteTitle: initialSiteConfig.seoSettings?.siteTitle || 'TikSave Pro - Download TikTok Videos Without Watermark Free (1080p HD)',
+  metaDescription: initialSiteConfig.seoSettings?.metaDescription || 'Download TikTok videos in HD 1080p, MP3 Audio, or Photo Slideshows without watermark for free. Unlimited fast downloads on iPhone, Android, PC, and Mac.',
+  keywords: initialSiteConfig.seoSettings?.keywords || 'tiktok downloader, download tiktok without watermark, tiktok mp3 downloader, ssstik, snaptik, tiktok video saver, tiktok no watermark 1080p',
+  ogImage: initialSiteConfig.seoSettings?.ogImage || 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=1200&q=80',
+  googleSiteVerification: initialSiteConfig.seoSettings?.googleSiteVerification || 'Ga26AjUtYkubAJiTKzxuXYnRh2tPb2D8JJwBE9GgXIk',
+  canonicalUrl: initialSiteConfig.seoSettings?.canonicalUrl || 'https://tiksave-pro.vercel.app',
+  author: initialSiteConfig.seoSettings?.author || 'TikSave Pro Team',
+  robotsMeta: initialSiteConfig.seoSettings?.robotsMeta || 'index, follow',
 
-  heroBadge: 'Updated for 2025 Algorithm',
-  heroTitleLine1: 'Download TikToks',
-  heroTitleGradient: 'Without Watermark',
-  heroSubtitle: 'Save TikTok videos in HD 1080p or MP3 Audio. Unlimited downloads with zero watermarks.',
-  inputPlaceholder: 'Paste TikTok link here...',
-  downloadBtnText: 'Download',
+  heroBadge: initialSiteConfig.seoSettings?.heroBadge || 'Updated for 2025 Algorithm',
+  heroTitleLine1: initialSiteConfig.seoSettings?.heroTitleLine1 || 'Download TikToks',
+  heroTitleGradient: initialSiteConfig.seoSettings?.heroTitleGradient || 'Without Watermark',
+  heroSubtitle: initialSiteConfig.seoSettings?.heroSubtitle || 'Save TikTok videos in HD 1080p or MP3 Audio. Unlimited downloads with zero watermarks.',
+  inputPlaceholder: initialSiteConfig.seoSettings?.inputPlaceholder || 'Paste TikTok link here...',
+  downloadBtnText: initialSiteConfig.seoSettings?.downloadBtnText || 'Download',
 
-  featuresSectionHeading: 'Why Choose TikSavePro?',
-  featuresSectionSubtitle: 'We offer the fastest watermark removal engine on the web with crisp HD quality.',
-  feature1Title: 'No Watermark',
-  feature1Desc: 'Download high-quality TikTok videos completely clean, without any logo or username watermark overlay.',
-  feature2Title: 'Lightning Fast',
-  feature2Desc: 'Our optimized cloud servers ensure your video downloads start instantly and finish in seconds.',
-  feature3Title: 'Unlimited & Free',
-  feature3Desc: 'No daily limits, no login required, no hidden costs. Pure unlimited video downloading freedom.',
+  featuresSectionHeading: initialSiteConfig.seoSettings?.featuresSectionHeading || 'Why Choose TikSavePro?',
+  featuresSectionSubtitle: initialSiteConfig.seoSettings?.featuresSectionSubtitle || 'We offer the fastest watermark removal engine on the web with crisp HD quality.',
+  feature1Title: initialSiteConfig.seoSettings?.feature1Title || 'No Watermark',
+  feature1Desc: initialSiteConfig.seoSettings?.feature1Desc || 'Download high-quality TikTok videos completely clean, without any logo or username watermark overlay.',
+  feature2Title: initialSiteConfig.seoSettings?.feature2Title || 'Lightning Fast',
+  feature2Desc: initialSiteConfig.seoSettings?.feature2Desc || 'Our optimized cloud servers ensure your video downloads start instantly and finish in seconds.',
+  feature3Title: initialSiteConfig.seoSettings?.feature3Title || 'Unlimited & Free',
+  feature3Desc: initialSiteConfig.seoSettings?.feature3Desc || 'No daily limits, no login required, no hidden costs. Pure unlimited video downloading freedom.',
 
-  stepsSectionHeading: 'How to Download in 3 Easy Steps',
-  step1Title: 'Copy Link',
-  step1Desc: 'Open the TikTok app or website, find the video you like, tap Share and select \'Copy Link\'.',
-  step2Title: 'Paste Link',
-  step2Desc: 'Paste your video link into the search box at the top of TikSave Pro.',
-  step3Title: 'Download Video',
-  step3Desc: 'Click Download and choose your preferred quality (MP4 HD or MP3 Audio).',
+  stepsSectionHeading: initialSiteConfig.seoSettings?.stepsSectionHeading || 'How to Download in 3 Easy Steps',
+  step1Title: initialSiteConfig.seoSettings?.step1Title || 'Copy Link',
+  step1Desc: initialSiteConfig.seoSettings?.step1Desc || 'Open the TikTok app or website, find the video you like, tap Share and select \'Copy Link\'.',
+  step2Title: initialSiteConfig.seoSettings?.step2Title || 'Paste Link',
+  step2Desc: initialSiteConfig.seoSettings?.step2Desc || 'Paste your video link into the search box at the top of TikSave Pro.',
+  step3Title: initialSiteConfig.seoSettings?.step3Title || 'Download Video',
+  step3Desc: initialSiteConfig.seoSettings?.step3Desc || 'Click Download and choose your preferred quality (MP4 HD or MP3 Audio).',
 
-  stat1Number: '10M+',
-  stat1Label: 'Videos Saved',
-  stat2Number: '0s',
-  stat2Label: 'Lag Time',
-  stat3Number: '100%',
-  stat3Label: 'Free & Secure',
-  stat4Number: '4.9/5',
-  stat4Label: 'User Rating',
+  stat1Number: initialSiteConfig.seoSettings?.stat1Number || '10M+',
+  stat1Label: initialSiteConfig.seoSettings?.stat1Label || 'Videos Saved',
+  stat2Number: initialSiteConfig.seoSettings?.stat2Number || '0s',
+  stat2Label: initialSiteConfig.seoSettings?.stat2Label || 'Lag Time',
+  stat3Number: initialSiteConfig.seoSettings?.stat3Number || '100%',
+  stat3Label: initialSiteConfig.seoSettings?.stat3Label || 'Free & Secure',
+  stat4Number: initialSiteConfig.seoSettings?.stat4Number || '4.9/5',
+  stat4Label: initialSiteConfig.seoSettings?.stat4Label || 'User Rating',
 
-  faqPageTitle: 'Frequently Asked Questions - TikSave Pro Help Center',
-  faqPageMetaDescription: 'Find answers to popular questions about downloading TikTok videos without watermark, iOS and Android steps, MP3 audio extraction, and troubleshooting.',
-  faqBadge: 'Help Center & Knowledge Base',
-  faqH1Line1: 'Frequently Asked',
-  faqH1Gradient: 'Questions',
-  faqSubtitle: 'Find quick answers to common questions about downloading TikTok videos without watermarks.',
-  faqsList: [
-    {
-      category: 'General',
-      question: 'Is TikSave Pro really 100% free?',
-      answer: 'Yes! TikSave Pro is completely free to use. There are no registrations, no subscription fees, no credit card requirements, and no daily download limits.'
-    },
-    {
-      category: 'General',
-      question: 'Do I need a TikTok account or login to download videos?',
-      answer: 'No account required! You don\'t need to log in to TikTok or link your personal profile. Just copy any public video link and paste it into TikSave Pro.'
-    },
-    {
-      category: 'General',
-      question: 'Is it legal to download TikTok videos for personal use?',
-      answer: 'Downloading TikTok videos for personal offline viewing or reference is legal. However, if you plan to re-post or use the content publicly, always credit the original creator and observe copyright laws.'
-    },
-    {
-      category: 'Devices & OS',
-      question: 'How do I download TikTok videos on iPhone / iPad (iOS)?',
-      answer: 'On iOS 13 or newer: Open the TikTok app, tap \'Share\' -> \'Copy Link\'. Open Safari, visit TikSave Pro, paste the link in the search box, and hit Download. Tap the Download icon in Safari to view or save to your Photos app.'
-    },
-    {
-      category: 'Devices & OS',
-      question: 'How do I download TikTok videos on Android devices?',
-      answer: 'Open TikTok, tap \'Share\' -> \'Copy Link\'. Open Chrome or any web browser, go to TikSave Pro, paste the link, and tap \'Download\'. The MP4 file will save directly to your phone\'s Gallery or Downloads folder.'
-    },
-    {
-      category: 'Devices & OS',
-      question: 'Can I download TikTok videos on Windows PC or Mac?',
-      answer: 'Yes! TikSave Pro works seamlessly on all desktop browsers (Chrome, Edge, Safari, Firefox, Opera). Simply paste the video link into the search bar and download in 1-click.'
-    },
-    {
-      category: 'Devices & OS',
-      question: 'Where are the downloaded videos saved on my device?',
-      answer: 'On smartphones (iOS & Android), files are saved in your browser\'s \'Downloads\' folder or Files app. On desktop computers (PC/Mac), videos are saved into your default \'Downloads\' folder.'
-    },
-    {
-      category: 'Quality & Formats',
-      question: 'Why is there no watermark on downloaded videos?',
-      answer: 'TikSave Pro accesses TikTok\'s high-definition CDN stream directly to extract the raw video source before the platform applies its logo overlay and watermark.'
-    },
-    {
-      category: 'Quality & Formats',
-      question: 'What video resolutions and formats are supported?',
-      answer: 'We support HD (720p), Full HD (1080p), and original source resolutions in standard MP4 format. You can also extract MP3 audio files.'
-    },
-    {
-      category: 'Quality & Formats',
-      question: 'Can I extract MP3 audio or background music from TikTok?',
-      answer: 'Yes! Once you paste the link, select the MP3 Audio option from the format selector to save only the original background sound or song.'
-    },
-    {
-      category: 'Quality & Formats',
-      question: 'Does TikSave Pro support photo slideshow & photo carousel posts?',
-      answer: 'Yes, TikSave Pro fully supports photo posts! You can download all high-resolution images from any TikTok photo slideshow.'
-    },
-    {
-      category: 'Privacy & Safety',
-      question: 'Does TikSave Pro store or track my downloaded videos?',
-      answer: 'Never. We respect user privacy 100%. We do not host, save, or mirror any downloaded videos on our servers, nor do we track download histories.'
-    },
-    {
-      category: 'Privacy & Safety',
-      question: 'Is TikSave Pro safe and free from viruses or spyware?',
-      answer: 'Yes, 100% safe. TikSave Pro is entirely web-based and requires no app installation, no browser extension permissions, and no file downloads other than your requested video.'
-    },
-    {
-      category: 'Troubleshooting',
-      question: 'Why am I getting a \'Video Not Found\' or error message?',
-      answer: 'This usually happens if: 1) The TikTok user account is set to private. 2) The video was deleted. 3) The link URL was copied incomplete. Ensure the link starts with \'https://www.tiktok.com/\' or \'https://vm.tiktok.com/\'.'
-    },
-    {
-      category: 'Troubleshooting',
-      question: 'What should I do if the video plays in a new tab instead of downloading?',
-      answer: 'If your browser plays the video inline, right-click (or tap and hold on mobile) on the video player window and click \'Save Video As...\' or \'Download Video\'.'
-    }
-  ],
+  faqPageTitle: initialSiteConfig.seoSettings?.faqPageTitle || 'Frequently Asked Questions - TikSave Pro Help Center',
+  faqPageMetaDescription: initialSiteConfig.seoSettings?.faqPageMetaDescription || 'Find answers to popular questions about downloading TikTok videos without watermark, iOS and Android steps, MP3 audio extraction, and troubleshooting.',
+  faqBadge: initialSiteConfig.seoSettings?.faqBadge || 'Help Center & Knowledge Base',
+  faqH1Line1: initialSiteConfig.seoSettings?.faqH1Line1 || 'Frequently Asked',
+  faqH1Gradient: initialSiteConfig.seoSettings?.faqH1Gradient || 'Questions',
+  faqSubtitle: initialSiteConfig.seoSettings?.faqSubtitle || 'Find quick answers to common questions about downloading TikTok videos without watermarks.',
+  faqsList: (initialSiteConfig.seoSettings?.faqsList as FaqItem[]) || [],
 
-  blogPageTitle: 'TikTok Growth Hacks, Tutorials & News - TikSave Pro Blog',
-  blogPageMetaDescription: 'Discover expert tips, trends, and guides to master TikTok algorithm, grow your video views, and download content hassle-free.',
-  blogBadge: 'Our Blog',
-  blogH1Line1: 'Latest News &',
-  blogH1Gradient: 'Insights',
-  blogSubtitle: 'Discover tips, trends, and guides to master TikTok and social media growth.',
+  blogPageTitle: initialSiteConfig.seoSettings?.blogPageTitle || 'TikTok Growth Hacks, Tutorials & News - TikSave Pro Blog',
+  blogPageMetaDescription: initialSiteConfig.seoSettings?.blogPageMetaDescription || 'Discover expert tips, trends, and guides to master TikTok algorithm, grow your video views, and download content hassle-free.',
+  blogBadge: initialSiteConfig.seoSettings?.blogBadge || 'Our Blog',
+  blogH1Line1: initialSiteConfig.seoSettings?.blogH1Line1 || 'Latest News &',
+  blogH1Gradient: initialSiteConfig.seoSettings?.blogH1Gradient || 'Insights',
+  blogSubtitle: initialSiteConfig.seoSettings?.blogSubtitle || 'Discover tips, trends, and guides to master TikTok and social media growth.',
 
-  customHeadScript: '',
-  customBodyScript: '',
-  robotsTxtContent: 'User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: https://tiksave-pro.vercel.app/sitemap.xml',
-  customSchemaOverride: ''
+  ga4MeasurementId: initialSiteConfig.seoSettings?.ga4MeasurementId || 'G-TIKSAVEPRO2025',
+  customHeadScript: initialSiteConfig.seoSettings?.customHeadScript || '',
+  customBodyScript: initialSiteConfig.seoSettings?.customBodyScript || '',
+  robotsTxtContent: initialSiteConfig.seoSettings?.robotsTxtContent || 'User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: https://tiksave-pro.vercel.app/sitemap.xml',
+  customSchemaOverride: initialSiteConfig.seoSettings?.customSchemaOverride || ''
 };
 
 export const getSeoSettings = (): SeoSettings => {
