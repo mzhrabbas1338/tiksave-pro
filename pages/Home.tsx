@@ -407,7 +407,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Steps Section */}
-      <section className="py-12 sm:py-24 dark:bg-brand-surface bg-slate-100/90 border-t border-slate-200 dark:border-transparent relative overflow-hidden px-4 sm:px-6">
+      <section className="py-12 sm:py-24 dark:bg-brand-surface bg-white border-t border-slate-200 dark:border-transparent relative overflow-hidden px-4 sm:px-6">
          <div className="max-w-7xl mx-auto relative z-10">
            <h2 className="text-2xl sm:text-4xl font-extrabold text-center mb-10 sm:mb-16 dark:text-white text-slate-900">
              {seo.stepsSectionHeading || 'How to Download in 3 Easy Steps'}
