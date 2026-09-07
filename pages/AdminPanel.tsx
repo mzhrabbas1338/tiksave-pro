@@ -283,11 +283,23 @@ const AdminPanel: React.FC = () => {
     }
   };
 
-  const handleSaveAds = (e: React.FormEvent) => {
+  const handleSaveAds = async (e: React.FormEvent) => {
     e.preventDefault();
     saveAdSettings(adForm);
     setAdSavedNotice(true);
-    setTimeout(() => setAdSavedNotice(false), 3000);
+
+    const commitMsg = prompt(
+      'Enter Git commit message for Ad settings update (or click OK to push to main):',
+      customCommitMessage || 'cms: update ad monetization settings'
+    );
+
+    if (commitMsg !== null) {
+      const msgToUse = commitMsg.trim() || 'cms: update ad monetization settings';
+      setCustomCommitMessage(msgToUse);
+      await handleManualGitCommit(msgToUse);
+    } else {
+      setTimeout(() => setAdSavedNotice(false), 3000);
+    }
   };
 
   const handleUpdateMasterKey = (e: React.FormEvent) => {
@@ -1544,11 +1556,29 @@ const AdminPanel: React.FC = () => {
               <h2 className="text-2xl font-bold dark:text-white text-slate-900">AdSense & Monetization Control Studio</h2>
               <p className="text-sm dark:text-gray-400 text-slate-600">Paste your ad codes (AdSense, Ezoic, Mediavine) and toggle placements live.</p>
             </div>
-            {adSavedNotice && (
-              <span className="px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30 animate-pulse">
-                ✅ Ad Settings Saved Live!
-              </span>
-            )}
+            <div className="flex flex-wrap items-center gap-3">
+              {adSavedNotice && (
+                <span className="px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30 animate-pulse">
+                  ✅ Ad Settings Saved Live!
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  saveAdSettings(adForm);
+                  const msg = prompt('Enter Git commit message for Ad settings update:', customCommitMessage || 'cms: update ad monetization settings');
+                  if (msg !== null) {
+                    const msgToUse = msg.trim() || 'cms: update ad monetization settings';
+                    setCustomCommitMessage(msgToUse);
+                    handleManualGitCommit(msgToUse);
+                  }
+                }}
+                disabled={isCommittingGit}
+                className="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold rounded-xl text-xs hover:opacity-90 shadow-md transition-all flex items-center gap-1.5 flex-shrink-0"
+              >
+                <span>{isCommittingGit ? '⏳ Committing...' : '🚀 Commit Ads to Git Main'}</span>
+              </button>
+            </div>
           </div>
 
           <form onSubmit={handleSaveAds} className="space-y-6">
@@ -1638,12 +1668,16 @@ const AdminPanel: React.FC = () => {
               />
             </div>
 
-            <div className="pt-4 border-t dark:border-white/10 border-slate-200 flex justify-end">
+            <div className="pt-4 border-t dark:border-white/10 border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <span className="text-xs dark:text-gray-400 text-slate-500">
+                ⚡ Toggling ad slots updates live for visitors and prompts to commit to Git main repository.
+              </span>
               <button
                 type="submit"
-                className="px-8 py-3.5 bg-gradient-to-r from-brand-cyan to-brand-pink text-white font-extrabold rounded-xl shadow-lg hover:opacity-90 transition-all"
+                disabled={isCommittingGit}
+                className="px-8 py-3.5 bg-gradient-to-r from-brand-cyan to-brand-pink text-white font-extrabold rounded-xl shadow-lg hover:opacity-90 transition-all text-sm flex items-center gap-2"
               >
-                Save & Apply Monetization Settings
+                <span>{isCommittingGit ? '⏳ Committing...' : 'Save & Commit Ad Settings to Git Main 🚀'}</span>
               </button>
             </div>
           </form>

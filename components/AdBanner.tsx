@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getAdSettings, AdSettings } from '../utils/adManager';
 
 interface AdBannerProps {
@@ -8,12 +8,29 @@ interface AdBannerProps {
 
 const AdBanner: React.FC<AdBannerProps> = ({ slot, className = '' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const settings = getAdSettings();
+  const [settings, setSettings] = useState<AdSettings>(getAdSettings());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setSettings(getAdSettings());
+    };
+
+    window.addEventListener('ad_settings_updated', handleUpdate);
+    window.addEventListener('tiksave_global_store_updated', handleUpdate);
+
+    return () => {
+      window.removeEventListener('ad_settings_updated', handleUpdate);
+      window.removeEventListener('tiksave_global_store_updated', handleUpdate);
+    };
+  }, []);
 
   const slotConfig = settings[slot];
 
   useEffect(() => {
     if (!settings.globalAdsEnabled || !slotConfig || !slotConfig.enabled || !slotConfig.code) {
+      if (containerRef.current) {
+        containerRef.current.innerHTML = '';
+      }
       return;
     }
 
