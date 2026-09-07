@@ -30,6 +30,7 @@ const AdminPanel: React.FC = () => {
   const [isTestingGithub, setIsTestingGithub] = useState(false);
   const [githubTestStatus, setGithubTestStatus] = useState<any>(null);
   const [isCommittingGit, setIsCommittingGit] = useState(false);
+  const [customCommitMessage, setCustomCommitMessage] = useState('cms: update site configuration & blog posts');
   const [lastCommitInfo, setLastCommitInfo] = useState<any>(() => {
     try {
       const saved = localStorage.getItem('tiksave_last_git_commit');
@@ -128,11 +129,13 @@ const AdminPanel: React.FC = () => {
     setIsTestingGithub(false);
   };
 
-  const handleManualGitCommit = async () => {
+  const handleManualGitCommit = async (msgOverride?: string) => {
     setIsCommittingGit(true);
     saveGitHubConfig(githubForm);
     const masterStore = getMasterGlobalStore();
-    const res = await commitToGitHubRepository(masterStore, `cms: manual Git push & Vercel deploy [${new Date().toLocaleString()}]`, githubForm);
+    masterStore.lastUpdated = Date.now();
+    const commitMsg = (msgOverride || customCommitMessage || '').trim() || `cms: update site config [${new Date().toLocaleString()}]`;
+    const res = await commitToGitHubRepository(masterStore, commitMsg, githubForm);
     setIsCommittingGit(false);
     if (res.success) {
       setGithubNotice(`✅ ${res.message}`);
@@ -340,6 +343,20 @@ const AdminPanel: React.FC = () => {
           >
             👁️ View Public Site
           </a>
+          <button
+            type="button"
+            onClick={() => {
+              const msg = prompt('Enter Git commit message:', customCommitMessage);
+              if (msg !== null) {
+                setCustomCommitMessage(msg);
+                handleManualGitCommit(msg);
+              }
+            }}
+            disabled={isCommittingGit}
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-sm hover:opacity-90 shadow-md transition-all flex items-center gap-1.5"
+          >
+            <span>{isCommittingGit ? '⏳ Committing...' : '🚀 Commit to Git main'}</span>
+          </button>
         </div>
       </div>
 
@@ -396,6 +413,79 @@ const AdminPanel: React.FC = () => {
                 <p className="text-xs dark:text-gray-400 text-slate-600 mt-1">Manage AdSense banners, top leaderboard slots, and monetization toggles.</p>
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB: GITHUB & VERCEL AUTOMATIC GIT DEPLOYMENT */}
+      {activeTab === 'github' && (
+        <div className="dark:bg-brand-surface bg-white border dark:border-white/10 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl space-y-8 animate-fade-in">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b dark:border-white/10 border-slate-200">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="px-3 py-1 rounded-full bg-slate-800 text-white text-xs font-bold border border-white/20">
+                  🐙 Git-Based CMS Architecture
+                </span>
+                <span className="text-xs dark:text-gray-400 text-slate-500">Auto-Commits & Vercel Build Trigger</span>
+              </div>
+              <h2 className="text-2xl font-bold dark:text-white text-slate-900">GitHub API & Vercel Auto-Deploy Studio</h2>
+              <p className="text-sm dark:text-gray-400 text-slate-600">Connect your GitHub repository to automatically commit all admin edits and trigger instant production builds on Vercel.</p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleManualGitCommit()}
+                disabled={isCommittingGit}
+                className="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold rounded-xl text-xs hover:opacity-90 shadow-md transition-all flex items-center gap-2"
+              >
+                <span>{isCommittingGit ? '⏳ Committing...' : '🚀 Commit to Git main & Deploy'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Commit Message & Push Action Card */}
+          <div className="p-6 rounded-2xl dark:bg-black/40 bg-slate-50 border dark:border-white/10 border-slate-200 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold dark:text-white text-slate-900 text-sm flex items-center gap-2">
+                <span>📝 Commit Message & Push to Git Main</span>
+              </h3>
+              <span className="text-xs text-emerald-400 font-mono font-bold">Target Branch: {githubForm.branch || 'main'}</span>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider dark:text-gray-300 text-slate-700 mb-1">
+                Git Commit Message
+              </label>
+              <input
+                type="text"
+                value={customCommitMessage}
+                onChange={(e) => setCustomCommitMessage(e.target.value)}
+                placeholder="e.g. cms: update blog posts and SEO titles"
+                className="w-full dark:bg-black/50 bg-slate-100 border dark:border-white/15 border-slate-300 rounded-xl px-4 py-3 dark:text-white text-slate-900 font-mono text-sm focus:outline-none focus:border-brand-cyan"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => handleManualGitCommit()}
+              disabled={isCommittingGit}
+              className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold rounded-xl shadow-lg hover:opacity-90 transition-all text-xs flex items-center justify-center gap-2"
+            >
+              <span>{isCommittingGit ? '⏳ Pushing Commit to Git Main...' : `🚀 Commit Changes to Git (${githubForm.branch || 'main'})`}</span>
+            </button>
+          </div>
+
+          {/* Setup Instructions */}
+          <div className="p-5 rounded-2xl dark:bg-black/40 bg-slate-50 border dark:border-white/10 border-slate-200 space-y-3">
+            <h3 className="font-bold dark:text-white text-slate-900 text-sm flex items-center gap-2">
+              <span>💡 How to Generate Your GitHub Personal Access Token (PAT)</span>
+            </h3>
+            <ol className="text-xs dark:text-gray-300 text-slate-700 space-y-1.5 list-decimal pl-4">
+              <li>Go to GitHub: <strong>Settings ➔ Developer Settings ➔ Personal Access Tokens ➔ Tokens (classic)</strong> or Fine-grained tokens.</li>
+              <li>Click <strong>Generate New Token</strong> and select scope: <code className="bg-black/30 px-1.5 py-0.5 rounded text-emerald-400 font-mono text-[11px]">repo</code> (Full control of private/public repositories).</li>
+              <li>Copy your token (<code className="bg-black/30 px-1.5 py-0.5 rounded text-cyan-400 font-mono text-[11px]">ghp_xxxxxxxxxxxxxx</code>) and paste it below.</li>
+            </ol>
           </div>
         </div>
       )}
