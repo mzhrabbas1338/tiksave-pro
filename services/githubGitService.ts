@@ -124,89 +124,106 @@ export const commitToGitHubRepository = async (
   const filePath = (config.filePath || 'data/site_config.json').trim();
   const token = config.personalAccessToken.trim();
 
-  const targetUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}?ref=${branch}`;
+  const fetchLatestSha = async (): Promise<string | undefined> => {
+    try {
+      const getRes = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}?ref=${branch}&_t=${Date.now()}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          }
+        }
+      );
 
-  let existingSha: string | undefined = undefined;
-
-  // 1. Fetch current file SHA if file already exists in repository
-  try {
-    const getRes = await fetch(targetUrl, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
+      if (getRes.ok) {
+        const fileData = await getRes.json();
+        return fileData.sha;
       }
-    });
-
-    if (getRes.ok) {
-      const fileData = await getRes.json();
-      existingSha = fileData.sha;
+    } catch (e) {
+      console.warn('File check warning before commit:', e);
     }
-  } catch (e) {
-    console.warn('File check warning before commit:', e);
-  }
-
-  // 2. Format JSON content and encode UTF-8 Base64
-  const jsonContent = JSON.stringify(globalStore, null, 2);
-  const base64Content = utf8ToBase64(jsonContent);
-
-  const commitMessage = customCommitMsg || `cms: update ${filePath} from TikSave Pro Admin Panel [${new Date().toISOString()}]`;
-
-  const payload: any = {
-    message: commitMessage,
-    content: base64Content,
-    branch
+    return undefined;
   };
 
-  if (existingSha) {
-    payload.sha = existingSha;
-  }
+  const jsonContent = JSON.stringify(globalStore, null, 2);
+  const base64Content = utf8ToBase64(jsonContent);
+  const commitMessage = customCommitMsg || `cms: update ${filePath} from TikSave Pro Admin Panel [${new Date().toISOString()}]`;
 
-  // 3. Issue PUT request to commit file to GitHub
-  try {
-    const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/vnd.github.v3+json'
-      },
-      body: JSON.stringify(payload)
-    });
+  // Attempt commit with optional SHA retry on 409 conflict
+  const attemptCommit = async (sha?: string): Promise<CommitResult> => {
+    const payload: any = {
+      message: commitMessage,
+      content: base64Content,
+      branch
+    };
 
-    if (putRes.ok) {
-      const resData = await putRes.json();
-      const commitSha = resData.commit?.sha?.substring(0, 7) || 'latest';
-      const commitHtmlUrl = resData.commit?.html_url || `https://github.com/${owner}/${repo}`;
-      
-      console.log(`✅ Git commit successful (${commitSha})! Triggering Vercel deployment...`);
+    if (sha) {
+      payload.sha = sha;
+    }
 
-      // Log last commit to localStorage
-      try {
-        localStorage.setItem('tiksave_last_git_commit', JSON.stringify({
+    try {
+      const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github.v3+json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (putRes.ok) {
+        const resData = await putRes.json();
+        const commitSha = resData.commit?.sha?.substring(0, 7) || 'latest';
+        const commitHtmlUrl = resData.commit?.html_url || `https://github.com/${owner}/${repo}`;
+        
+        console.log(`✅ Git commit successful (${commitSha})! Triggering Vercel deployment...`);
+
+        try {
+          localStorage.setItem('tiksave_last_git_commit', JSON.stringify({
+            sha: commitSha,
+            url: commitHtmlUrl,
+            time: Date.now(),
+            message: commitMessage
+          }));
+        } catch (e) {}
+
+        return {
+          success: true,
+          message: `Committed cleanly to Git (${commitSha})! Vercel Deployment Triggered!`,
           sha: commitSha,
-          url: commitHtmlUrl,
-          time: Date.now(),
-          message: commitMessage
-        }));
-      } catch (e) {}
-
-      return {
-        success: true,
-        message: `Committed cleanly to Git (${commitSha})! Vercel Deployment Triggered!`,
-        sha: commitSha,
-        commitUrl: commitHtmlUrl
-      };
-    } else {
-      const errData = await putRes.json().catch(() => ({}));
+          commitUrl: commitHtmlUrl
+        };
+      } else if (putRes.status === 409) {
+        // 409 Conflict: SHA mismatched due to stale cache - re-fetch fresh SHA and retry
+        console.warn('409 SHA Conflict detected! Re-fetching latest fresh SHA from GitHub...');
+        const freshSha = await fetchLatestSha();
+        if (freshSha && freshSha !== sha) {
+          return await attemptCommit(freshSha);
+        }
+        const errData = await putRes.json().catch(() => ({}));
+        return {
+          success: false,
+          message: `GitHub Commit Error (409): ${errData.message || 'File conflict'}`
+        };
+      } else {
+        const errData = await putRes.json().catch(() => ({}));
+        return {
+          success: false,
+          message: `GitHub Commit Error (${putRes.status}): ${errData.message || 'Permission denied'}`
+        };
+      }
+    } catch (e: any) {
       return {
         success: false,
-        message: `GitHub Commit Error (${putRes.status}): ${errData.message || 'Permission denied'}`
+        message: `Failed to commit to GitHub: ${e?.message || e}`
       };
     }
-  } catch (e: any) {
-    return {
-      success: false,
-      message: `Failed to commit to GitHub: ${e?.message || e}`
-    };
-  }
+  };
+
+  const initialSha = await fetchLatestSha();
+  return await attemptCommit(initialSha);
 };
