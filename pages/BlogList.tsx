@@ -80,7 +80,7 @@ const BlogList: React.FC = () => {
 const BlogCard: React.FC<{ post: BlogPost }> = ({ post }) => (
   <Link 
     to={`/blog/${post.slug}`}
-    className="group glass-card rounded-3xl overflow-hidden dark:border-white/5 border-gray-200 bg-white shadow-sm hover:shadow-xl hover:border-brand-cyan/30 transition-all duration-500 hover:-translate-y-2"
+    className="group glass-card rounded-3xl overflow-hidden dark:border-white/5 border-gray-200 dark:bg-brand-surface bg-white shadow-sm hover:shadow-xl hover:border-brand-cyan/30 transition-all duration-500 hover:-translate-y-2"
   >
     <div className="aspect-[16/10] overflow-hidden relative">
       <img 

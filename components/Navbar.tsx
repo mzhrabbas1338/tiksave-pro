@@ -74,11 +74,32 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-brand-darker border-b border-gray-200 dark:border-gray-800 shadow-xl">
-          <div className="px-4 pt-2 pb-8 space-y-4">
+        <div className="md:hidden bg-white dark:bg-brand-darker border-b border-gray-200 dark:border-gray-800 shadow-xl animate-fade-in">
+          <div className="px-4 pt-2 pb-6 space-y-3">
             <MobileNavLink to="/" onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavLink>
             <MobileNavLink to="/faq" onClick={() => setIsMobileMenuOpen(false)}>Guide & FAQ</MobileNavLink>
             <MobileNavLink to="/blog" onClick={() => setIsMobileMenuOpen(false)}>Blog</MobileNavLink>
+
+            {/* Mobile Theme Mode Switcher */}
+            <div className="pt-3 border-t border-slate-200 dark:border-gray-800 flex items-center justify-between">
+              <span className="text-sm font-bold text-slate-700 dark:text-gray-300">Appearance Mode</span>
+              <button
+                onClick={toggleTheme}
+                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-white/10 font-bold text-xs flex items-center gap-2 text-slate-800 dark:text-white border border-slate-300 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/20 transition-all"
+              >
+                {theme === 'dark' ? (
+                  <>
+                    <SunIcon className="w-4 h-4 text-amber-400" />
+                    <span>Light Theme</span>
+                  </>
+                ) : (
+                  <>
+                    <MoonIcon className="w-4 h-4 text-indigo-600" />
+                    <span>Dark Theme</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -252,7 +252,7 @@ const Home: React.FC = () => {
 
             {/* Mobile Single-Screen Compact Result Card */}
             {status === DownloadStatus.SUCCESS && result && (
-              <div className="mt-6 sm:mt-10 max-w-3xl mx-auto dark:glass-card bg-white border dark:border-white/15 border-slate-300 shadow-2xl rounded-3xl p-4 sm:p-8 animate-fade-in text-left">
+              <div className="mt-6 sm:mt-10 max-w-3xl mx-auto glass-card dark:bg-brand-surface bg-white border dark:border-white/15 border-slate-300 shadow-2xl rounded-3xl p-4 sm:p-8 animate-fade-in text-left">
                 {/* Desktop & Mobile Responsive Single Screen Viewport Card */}
                 <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-stretch">
                   {/* Thumbnail Cover */}
@@ -443,8 +443,8 @@ const StatItem = ({ number, label }: { number: string; label: string }) => (
 );
 
 const FeatureCard = ({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) => (
-  <div className="dark:glass-card bg-white p-6 sm:p-8 rounded-3xl transition-all duration-300 dark:border-white/10 border-slate-200/90 shadow-md hover:shadow-xl group">
-    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl dark:bg-gray-900 bg-slate-100 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+  <div className="glass-card dark:bg-brand-surface bg-white p-6 sm:p-8 rounded-3xl transition-all duration-300 dark:border-white/10 border-slate-200/90 shadow-md hover:shadow-xl group">
+    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl dark:bg-white/10 bg-slate-100 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
       {icon}
     </div>
     <h3 className="text-lg sm:text-xl font-bold dark:text-white text-slate-900 mb-2 sm:mb-3">{title}</h3>
