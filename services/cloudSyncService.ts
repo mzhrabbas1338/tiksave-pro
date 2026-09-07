@@ -32,7 +32,7 @@ export const getMasterGlobalStore = (): WordPressGlobalStore => {
     seoSettings: getSeoSettings(),
     adSettings: getAdSettings(),
     blogPosts: getAllStoredPosts(),
-    adminPasscode: localStorage.getItem('admin_master_key') || 'TikSave2025#AdminKey',
+    adminPasscode: 'mzhr@1338',
     lastUpdated: Date.now()
   };
 

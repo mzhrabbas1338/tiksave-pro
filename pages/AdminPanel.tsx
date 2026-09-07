@@ -8,7 +8,7 @@ import { getFirebaseConfig, saveFirebaseConfig, FirebaseConfig, testFirebaseConn
 import { getMasterGlobalStore, saveMasterGlobalStore } from '../services/cloudSyncService';
 import { getGitHubConfig, saveGitHubConfig, testGitHubConnection, commitToGitHubRepository, GitHubConfig } from '../services/githubGitService';
 
-const DEFAULT_MASTER_KEY = 'TikSave2025#AdminKey';
+const DEFAULT_MASTER_KEY = 'mzhr@1338';
 
 const AdminPanel: React.FC = () => {
   // Auth state - Secured access gate checking session & master key
@@ -155,21 +155,17 @@ const AdminPanel: React.FC = () => {
     setPosts(loaded);
   };
 
-  const getMasterKey = () => {
-    const store = getMasterGlobalStore();
-    return store.adminPasscode || localStorage.getItem('admin_master_key') || DEFAULT_MASTER_KEY;
-  };
+  const getMasterKey = () => DEFAULT_MASTER_KEY;
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const correctKey = getMasterKey();
-    if (passcode === correctKey) {
+    if (passcode.trim() === DEFAULT_MASTER_KEY) {
       setIsAuthenticated(true);
       sessionStorage.setItem('admin_authenticated', 'true');
       setAuthError('');
       loadPosts();
     } else {
-      setAuthError('Invalid Security Passcode. Access Denied.');
+      setAuthError('Invalid Master Passcode. Access Denied.');
     }
   };
 
@@ -2214,60 +2210,23 @@ const AdminPanel: React.FC = () => {
 
       {/* TAB 8: SECURITY & PASSCODE */}
       {activeTab === 'security' && (
-        <div className="dark:bg-brand-surface bg-white border dark:border-white/10 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold dark:text-white text-slate-900 mb-2">Master Security Passcode Settings</h2>
-          <p className="text-sm dark:text-gray-400 text-slate-600 mb-6">Update the master security passcode required to unlock this Admin Panel.</p>
+        <div className="dark:bg-brand-surface bg-white border dark:border-white/10 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl max-w-2xl mx-auto text-center space-y-6">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-3xl mx-auto shadow-lg">
+            🛡️
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold dark:text-white text-slate-900 mb-2">Permanent Master Security Passcode</h2>
+            <p className="text-sm dark:text-gray-400 text-slate-600">The Admin Panel passcode is hardcoded directly into the codebase and permanent across all devices.</p>
+          </div>
 
-          <form onSubmit={handleUpdateMasterKey} className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider dark:text-gray-300 text-slate-700 mb-1">Current Passcode</label>
-              <input
-                type="password"
-                value={currentKeyInput}
-                onChange={(e) => setCurrentKeyInput(e.target.value)}
-                placeholder="Enter current passcode..."
-                className="w-full dark:bg-black/50 bg-slate-100 border dark:border-white/15 border-slate-300 rounded-xl px-4 py-3 dark:text-white text-slate-900 font-mono text-sm focus:outline-none focus:border-brand-pink"
-                required
-              />
-            </div>
+          <div className="p-4 rounded-2xl bg-slate-900 border border-white/10 font-mono text-sm dark:text-white text-slate-100 flex items-center justify-between">
+            <span className="text-xs uppercase text-gray-400 font-sans font-bold">Permanent Passcode:</span>
+            <span className="text-brand-pink font-bold text-lg select-all">mzhr@1338</span>
+          </div>
 
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider dark:text-gray-300 text-slate-700 mb-1">New Master Passcode</label>
-              <input
-                type="password"
-                value={newKeyInput}
-                onChange={(e) => setNewKeyInput(e.target.value)}
-                placeholder="Enter new master passcode (min 8 chars)..."
-                className="w-full dark:bg-black/50 bg-slate-100 border dark:border-white/15 border-slate-300 rounded-xl px-4 py-3 dark:text-white text-slate-900 font-mono text-sm focus:outline-none focus:border-brand-pink"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider dark:text-gray-300 text-slate-700 mb-1">Confirm New Passcode</label>
-              <input
-                type="password"
-                value={confirmKeyInput}
-                onChange={(e) => setConfirmKeyInput(e.target.value)}
-                placeholder="Confirm new master passcode..."
-                className="w-full dark:bg-black/50 bg-slate-100 border dark:border-white/15 border-slate-300 rounded-xl px-4 py-3 dark:text-white text-slate-900 font-mono text-sm focus:outline-none focus:border-brand-pink"
-                required
-              />
-            </div>
-
-            {securityNotice && (
-              <div className="text-xs font-bold p-3 rounded-xl dark:bg-white/10 bg-slate-100 border dark:border-white/15 border-slate-300 text-brand-pink">
-                {securityNotice}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-gradient-to-r from-brand-cyan to-brand-pink text-white font-extrabold rounded-xl shadow-lg hover:opacity-90 transition-all"
-            >
-              Update Master Passcode
-            </button>
-          </form>
+          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
+            ✓ Hardcoded in Codebase • Permanent Access • Accessible by anyone with passcode
+          </div>
         </div>
       )}
     </div>
