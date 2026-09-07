@@ -121,7 +121,9 @@ export const commitToGitHubRepository = async (
   const owner = config.owner.trim();
   const repo = config.repo.trim();
   const branch = (config.branch || 'main').trim();
-  const filePath = (config.filePath || 'data/site_config.json').trim();
+  // Strip any leading slashes e.g. "/public/data/site_config.json" -> "public/data/site_config.json"
+  const rawPath = (config.filePath || 'public/data/site_config.json').trim();
+  const filePath = rawPath.replace(/^\/+/, '');
   const token = config.personalAccessToken.trim();
 
   const fetchLatestSha = async (): Promise<string | undefined> => {
@@ -140,11 +142,51 @@ export const commitToGitHubRepository = async (
 
       if (getRes.ok) {
         const fileData = await getRes.json();
-        return fileData.sha;
+        if (fileData && fileData.sha) {
+          return fileData.sha;
+        }
       }
     } catch (e) {
       console.warn('File check warning before commit:', e);
     }
+
+    // Fallback: Query commits endpoint for the file SHA if direct contents call didn't return SHA
+    try {
+      const commitsRes = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/commits?path=${filePath}&sha=${branch}&per_page=1&_t=${Date.now()}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        }
+      );
+
+      if (commitsRes.ok) {
+        const commits = await commitsRes.json();
+        if (Array.isArray(commits) && commits.length > 0) {
+          // Query the tree for that file
+          const commitSha = commits[0].sha;
+          const treeRes = await fetch(
+            `https://api.github.com/repos/${owner}/${repo}/git/trees/${commitSha}?recursive=1`,
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/vnd.github.v3+json'
+              }
+            }
+          );
+          if (treeRes.ok) {
+            const treeData = await treeRes.json();
+            const fileItem = treeData.tree?.find((item: any) => item.path === filePath);
+            if (fileItem?.sha) {
+              return fileItem.sha;
+            }
+          }
+        }
+      }
+    } catch (e) {}
+
     return undefined;
   };
 
@@ -152,8 +194,8 @@ export const commitToGitHubRepository = async (
   const base64Content = utf8ToBase64(jsonContent);
   const commitMessage = customCommitMsg || `cms: update ${filePath} from TikSave Pro Admin Panel [${new Date().toISOString()}]`;
 
-  // Attempt commit with optional SHA retry on 409 conflict
-  const attemptCommit = async (sha?: string): Promise<CommitResult> => {
+  // Attempt commit with automatic SHA recovery on 409 or 422
+  const attemptCommit = async (sha?: string, isRetry: boolean = false): Promise<CommitResult> => {
     const payload: any = {
       message: commitMessage,
       content: base64Content,
@@ -197,17 +239,17 @@ export const commitToGitHubRepository = async (
           sha: commitSha,
           commitUrl: commitHtmlUrl
         };
-      } else if (putRes.status === 409) {
-        // 409 Conflict: SHA mismatched due to stale cache - re-fetch fresh SHA and retry
-        console.warn('409 SHA Conflict detected! Re-fetching latest fresh SHA from GitHub...');
+      } else if ((putRes.status === 409 || putRes.status === 422) && !isRetry) {
+        // Handle 409 Conflict or 422 ("sha" wasn't supplied) by fetching fresh SHA and retrying once
+        console.warn(`GitHub API ${putRes.status} returned - fetching fresh file SHA and retrying commit...`);
         const freshSha = await fetchLatestSha();
-        if (freshSha && freshSha !== sha) {
-          return await attemptCommit(freshSha);
+        if (freshSha) {
+          return await attemptCommit(freshSha, true);
         }
         const errData = await putRes.json().catch(() => ({}));
         return {
           success: false,
-          message: `GitHub Commit Error (409): ${errData.message || 'File conflict'}`
+          message: `GitHub Commit Error (${putRes.status}): ${errData.message || 'SHA missing or conflict'}`
         };
       } else {
         const errData = await putRes.json().catch(() => ({}));
