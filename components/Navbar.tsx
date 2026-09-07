@@ -82,23 +82,31 @@ const Navbar: React.FC = () => {
 
             {/* Mobile Theme Mode Switcher */}
             <div className="pt-3 border-t border-slate-200 dark:border-gray-800 flex items-center justify-between">
-              <span className="text-sm font-bold text-slate-700 dark:text-gray-300">Appearance Mode</span>
-              <button
-                onClick={toggleTheme}
-                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-white/10 font-bold text-xs flex items-center gap-2 text-slate-800 dark:text-white border border-slate-300 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/20 transition-all"
-              >
-                {theme === 'dark' ? (
-                  <>
-                    <SunIcon className="w-4 h-4 text-amber-400" />
-                    <span>Light Theme</span>
-                  </>
-                ) : (
-                  <>
-                    <MoonIcon className="w-4 h-4 text-indigo-600" />
-                    <span>Dark Theme</span>
-                  </>
-                )}
-              </button>
+              <span className="text-sm font-bold text-slate-800 dark:text-gray-200">Theme Mode</span>
+              <div className="p-1 rounded-xl bg-slate-200/80 dark:bg-white/10 flex items-center gap-1 border border-slate-300/50 dark:border-white/10">
+                <button
+                  onClick={() => { if (theme !== 'light') toggleTheme(); }}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    theme === 'light'
+                      ? 'bg-white text-slate-900 shadow-md font-extrabold'
+                      : 'text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  <SunIcon className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Light</span>
+                </button>
+                <button
+                  onClick={() => { if (theme !== 'dark') toggleTheme(); }}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    theme === 'dark'
+                      ? 'bg-slate-900 text-white shadow-md font-extrabold border border-white/20'
+                      : 'text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  <MoonIcon className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Dark</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

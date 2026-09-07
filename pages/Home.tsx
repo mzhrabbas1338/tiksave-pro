@@ -147,9 +147,9 @@ const Home: React.FC = () => {
           </div>
 
           {/* Title - SEO Expert Controlled H1 Tag */}
-          <h1 className="text-2xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-2 sm:mb-8 leading-tight dark:text-white text-slate-900">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-2 sm:mb-8 leading-tight dark:text-white text-slate-950">
             {seo.heroTitleLine1 || 'Download TikToks'} <br className="hidden sm:inline" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-purple-600 dark:via-white to-brand-pink animate-gradient-x bg-[length:200%_auto]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r dark:from-brand-cyan dark:via-purple-300 dark:to-brand-pink from-cyan-600 via-purple-600 to-pink-600 animate-gradient-x bg-[length:200%_auto]">
               {seo.heroTitleGradient || 'Without Watermark'}
             </span>
           </h1>
